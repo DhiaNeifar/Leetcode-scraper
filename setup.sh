@@ -8,18 +8,19 @@ CONFIG_FILE=".scraper_config"
 if [ ! -d "venv" ]; then
     echo "📦 Creating virtual environment..."
     python3 -m venv venv
+    source venv/bin/activate
+
+    echo "⬆️ Upgrading pip..."
+    pip install --upgrade pip
+
+    # Step 2: Install dependencies
+    echo "📚 Installing dependencies from requirements.txt..."
+    pip install -r requirements.txt
 else
     echo "✅ Virtual environment already exists."
+    source venv/bin/activate
 fi
-
 source venv/bin/activate
-
-echo "⬆️ Upgrading pip..."
-pip install --upgrade pip
-
-# Step 2: Install dependencies
-echo "📚 Installing dependencies from requirements.txt..."
-pip install -r requirements.txt
 
 # Step 3: Prompt user to login to LeetCode
 echo ""

@@ -11,6 +11,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 import xml.etree.ElementTree as ET
+import unicodedata
+
 
 class LeetCodeScraper:
     def __init__(self, logger, cookie_manager, save_dir="my-leetcode-solutions", state_file=".lastscraped"):
@@ -168,7 +170,10 @@ class LeetCodeScraper:
                         self.logger.warning("Skipping row with insufficient columns.")
                         continue
 
-                    timestamp_text = cols[0].get_attribute("innerText").strip()
+                    timestamp_text_raw = cols[0].get_attribute("innerText").strip()
+                    timestamp_text = unicodedata.normalize("NFKD", timestamp_text_raw).replace("\u00a0", " ")
+                    timestamp_text = re.sub(r'\s+', ' ', timestamp_text).strip()
+
                     submission_time = self.parse_relative_time(timestamp_text)
                     self.logger.debug(f"Row timestamp: \"{timestamp_text}\" parsed as {submission_time.isoformat()}")
 
