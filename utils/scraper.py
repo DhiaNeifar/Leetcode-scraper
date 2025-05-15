@@ -18,7 +18,7 @@ class LeetCodeScraper:
         self.cookie_manager = cookie_manager
         self.save_dir = save_dir
         self.state_file = state_file
-        self.saved_files = {}  # (pid, lang) -> datetime
+        self.saved_keys = set()  # set of (pid, lang)
         self.slug_to_id_title = {}
         self.last_scraped_time = self.load_last_scraped_time()
 
@@ -194,9 +194,9 @@ class LeetCodeScraper:
                     if not pid or not title:
                         continue
 
-                    # Only save if newer than what we already stored for (pid, lang)
-                    if (pid, lang) in self.saved_files and submission_time <= self.saved_files[(pid, lang)]:
-                        self.logger.info(f"Skipping older or duplicate submission for {pid} ({lang})")
+                    key = (pid, lang)
+                    if key in self.saved_keys:
+                        self.logger.info(f"Skipping duplicate submission for {pid} ({lang})")
                         continue
 
                     self.driver.execute_script("window.open(arguments[0]);", submission_link)
@@ -207,7 +207,7 @@ class LeetCodeScraper:
                     code = self.extract_code()
                     if code:
                         self.save_solution(pid, title, lang, code)
-                        self.saved_files[(pid, lang)] = submission_time
+                        self.saved_keys.add(key)
 
                     self.driver.close()
                     self.driver.switch_to.window(self.main_window)
