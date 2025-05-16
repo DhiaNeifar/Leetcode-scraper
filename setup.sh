@@ -91,18 +91,20 @@ if [[ $cron_choice == "y" || $cron_choice == "Y" ]]; then
     read -p "Enter frequency number (e.g., every 2 hours = 2): " interval
 
     venv_python="$(pwd)/venv/bin/python"
+    project_dir="$(pwd)"
     cron_entry=""
 
     case $freq in
-        m) cron_entry="*/$interval * * * * cd $(pwd) && xvfb-run -a $venv_python main.py $repo_folder >> cron.log 2>&1" ;;
-        h) cron_entry="0 */$interval * * * cd $(pwd) && xvfb-run -a $venv_python main.py $repo_folder >> cron.log 2>&1" ;;
-        d) cron_entry="0 0 */$interval * * cd $(pwd) && xvfb-run -a $venv_python main.py $repo_folder >> cron.log 2>&1" ;;
+        m) cron_entry="*/$interval * * * * cd $project_dir && xvfb-run -a $venv_python main.py $repo_folder && cd $repo_folder && git add . && git commit -m '🤖 Auto-update via cron on \$(date)' || true && source ../$CONFIG_FILE && git remote set-url origin \"https://\$GITHUB_TOKEN@\${REPO_URL#https://}\" && git push origin main >> $project_dir/cron.log 2>&1" ;;
+        h) cron_entry="0 */$interval * * * cd $project_dir && xvfb-run -a $venv_python main.py $repo_folder && cd $repo_folder && git add . && git commit -m '🤖 Auto-update via cron on \$(date)' || true && source ../$CONFIG_FILE && git remote set-url origin \"https://\$GITHUB_TOKEN@\${REPO_URL#https://}\" && git push origin main >> $project_dir/cron.log 2>&1" ;;
+        d) cron_entry="0 0 */$interval * * cd $project_dir && xvfb-run -a $venv_python main.py $repo_folder && cd $repo_folder && git add . && git commit -m '🤖 Auto-update via cron on \$(date)' || true && source ../$CONFIG_FILE && git remote set-url origin \"https://\$GITHUB_TOKEN@\${REPO_URL#https://}\" && git push origin main >> $project_dir/cron.log 2>&1" ;;
         *) echo "❌ Invalid frequency"; exit 1 ;;
     esac
 
     (crontab -l 2>/dev/null; echo "$cron_entry") | crontab -
-    echo "✅ Cron job added. Scraper will run every $interval $freq."
+    echo "✅ Cron job added. Scraper will run every $interval $freq and push updates to GitHub."
 fi
+
 
 echo ""
 echo "✅ Setup complete!"
