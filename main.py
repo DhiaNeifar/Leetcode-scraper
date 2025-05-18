@@ -10,7 +10,6 @@ Version: 1.0.0
 """
 
 import argparse
-from typing import Dict, Any, Optional
 from pathlib import Path
 
 from utils.cookies import CookieManager

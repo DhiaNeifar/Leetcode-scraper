@@ -8,7 +8,6 @@ LeetCode problem submissions and saving them as local files.
 Author: Dhia Neifar
 """
 
-import os
 import time
 import re
 import html

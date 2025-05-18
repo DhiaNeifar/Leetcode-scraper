@@ -9,9 +9,7 @@ Author: Dhia Neifar
 """
 
 import logging
-import os
 from datetime import datetime
-from typing import Optional
 from pathlib import Path
 
 
