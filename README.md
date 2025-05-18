@@ -38,9 +38,9 @@ LeetCode Scraper avoids all of this by:
 
 ## ⚙️ How It Works
 
-### 🔹 `setup.sh` Script
+### 🔹 `install.sh` Script
 
-The `setup.sh` script is your entrypoint. It:
+The `install.sh` script is your entrypoint. It:
 
 1. Creates a Python virtual environment (if not already created)
 2. Installs all Python dependencies from `requirements.txt`
