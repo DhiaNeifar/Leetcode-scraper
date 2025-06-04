@@ -104,30 +104,35 @@ class CookieManager:
 
     def load_cookies(self) -> bool:
         """
-        Load cookies from XML file or extract from browser if file doesn't exist.
+        Extract cookies from browser and saves them in leetcode_cookies.xml file.
 
+        # FIXME
         Checks if the cookie file exists. If not, tries to extract cookies from
         the browser and save them. If the file exists, assumes cookies are valid.
+
+        # WHY IT DOES NOT WORK
+        In previous version, if leetcode_cookies.xml exists, we simply load the
+        cookies even if the cookies expired.
+
+        #FIXED
+        No matter the existence of leetcode_cookies.xml file, we always extract
+        the cookies direclty from browser and save them. That way we are always
+        sure the cookies are valid (as long as the client is logged in).
 
         Returns:
             bool: True if cookies are available (either loaded or freshly extracted),
                   False if cookies couldn't be obtained
         """
-        if not os.path.exists(self.cookie_file):
-            self.logger.warning(f"Cookie file {self.cookie_file} does not exist. Attempting to extract fresh cookies.")
-            cookie_jar = self.extract_cookies()
+        self.logger.info("Extracting fresh cookies from Chrome browser...")
 
-            if cookie_jar:
-                save_result = self.save_cookies_to_xml(cookie_jar)
-                return save_result
+        cookie_jar = self.extract_cookies()
 
-            self.logger.error("Failed to obtain cookies from browser. Authentication will likely fail.")
-            return False
+        if cookie_jar:
+            save_result = self.save_cookies_to_xml(cookie_jar)
+            return save_result
 
-        self.logger.info(f"Using existing cookie file: {self.cookie_file}")
-        # In a more robust implementation, we might want to validate the cookies here
-        # (e.g., check expiration dates or attempt a test request)
-        return True
+        self.logger.error("Failed to obtain cookies from browser. Authentication will likely fail.")
+        return False
 
     def get_cookies_dict(self) -> Dict[str, str]:
         """

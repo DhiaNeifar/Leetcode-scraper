@@ -197,6 +197,7 @@ class LeetCodeScraper:
 
         except Exception as error:
             self.logger.error(f"Failed to load cookies: {error}")
+            self.logger.error(f"Please check if user is logged in. Visit https://leetcode.com/ in Google Chrome.")
             raise
 
     def extract_code(self) -> str:
